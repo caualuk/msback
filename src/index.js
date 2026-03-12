@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 8000;
+const PORT = Number(process.env.PORT) || 8000;
 const cors = require("cors");
 const path = require("path");
 
@@ -60,7 +60,15 @@ app.get("/db", async (req, res) => {
     const result = await pool.query("SELECT NOW()");
     res.json(result.rows);
   } catch (error) {
+    const aggregateDetails =
+      Array.isArray(error?.errors) && error.errors.length > 0
+        ? error.errors
+            .map((item) => item?.message || item?.code || "erro interno")
+            .join(" | ")
+        : null;
+
     const details =
+      aggregateDetails ||
       error?.message ||
       error?.code ||
       (() => {

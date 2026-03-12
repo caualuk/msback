@@ -17,8 +17,12 @@ function normalizeDatabaseUrl(rawUrl) {
   // Accept accidental formats like 'DATABASE_URL=postgres://...', '"postgres://...";' from .env edits.
   let sanitizedUrl = rawUrl.trim().replace(/^"|"$/g, "").replace(/;$/, "");
 
-  if (sanitizedUrl.toUpperCase().startsWith("DATABASE_URL=")) {
+  const upper = sanitizedUrl.toUpperCase();
+  if (upper.startsWith("DATABASE_URL=")) {
     sanitizedUrl = sanitizedUrl.slice("DATABASE_URL=".length).trim();
+  }
+  if (upper.startsWith("DATABASE_URL:")) {
+    sanitizedUrl = sanitizedUrl.slice("DATABASE_URL:".length).trim();
   }
 
   // Handles DATABASE_URL values where password contains unescaped '@'.
@@ -51,7 +55,19 @@ function normalizeDatabaseUrl(rawUrl) {
   return `${protocol}${user}:${encodedPassword}@${hostPart}${path}`;
 }
 
-const connectionString = normalizeDatabaseUrl(process.env.DATABASE_URL);
+const rawDatabaseUrl =
+  process.env.DATABASE_URL ||
+  process.env["DATABASE_URL:"] ||
+  process.env.POSTGRES_URL ||
+  process.env.POSTGRESQL_URL;
+
+const connectionString = normalizeDatabaseUrl(rawDatabaseUrl);
+
+if (!connectionString) {
+  console.error(
+    "DATABASE_URL ausente. Configure a variável DATABASE_URL no ambiente do servidor.",
+  );
+}
 const isSupabaseConnection = /supabase\.co/i.test(connectionString || "");
 const requiresSsl = /sslmode=require/i.test(connectionString || "") || isSupabaseConnection;
 const effectiveConnectionString = requiresSsl
