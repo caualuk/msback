@@ -151,6 +151,31 @@ async function getUsers(req, res) {
   }
 }
 
+async function getPlatformStats(req, res) {
+  try {
+    const result = await pool.query(
+      `SELECT
+         (SELECT COUNT(*)::int FROM users) AS total_users,
+         (SELECT COUNT(*)::int FROM users WHERE role = 'EMPLOYEE') AS total_employees,
+         (SELECT COUNT(*)::int FROM users WHERE role = 'CLIENT') AS total_clients,
+         (SELECT COUNT(*)::int FROM services) AS total_connections`,
+    );
+
+    const stats = result.rows[0] || {};
+
+    res.json({
+      totalUsers: Number(stats.total_users || 0),
+      totalEmployees: Number(stats.total_employees || 0),
+      totalClients: Number(stats.total_clients || 0),
+      totalConnections: Number(stats.total_connections || 0),
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Erro ao buscar estatísticas da plataforma: " + error.message,
+    });
+  }
+}
+
 async function getNearbyEmployees(req, res) {
   try {
     const { raio } = req.query;
@@ -524,6 +549,7 @@ async function searchEmployees(req, res) {
 module.exports = {
   createUser,
   getUsers,
+  getPlatformStats,
   login,
   getNearbyEmployees,
   radius,

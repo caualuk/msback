@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createUser,
   getUsers,
+  getPlatformStats,
   login,
   getNearbyEmployees,
   radius,
@@ -20,6 +21,10 @@ const user = router;
 
 user.get("/get", async (req, res) => {
   getUsers(req, res);
+});
+
+user.get("/platform-stats", async (req, res) => {
+  getPlatformStats(req, res);
 });
 
 user.post("/", (req, res) => {
