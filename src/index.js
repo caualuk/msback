@@ -60,9 +60,23 @@ app.get("/db", async (req, res) => {
     const result = await pool.query("SELECT NOW()");
     res.json(result.rows);
   } catch (error) {
+    const details =
+      error?.message ||
+      error?.code ||
+      (() => {
+        try {
+          return JSON.stringify(error);
+        } catch {
+          return "Sem detalhes";
+        }
+      })();
+
     res.status(500).json({
       error: "Erro ao conectar no banco",
-      details: error?.message || "Sem detalhes",
+      details,
+      code: error?.code || null,
+      address: error?.address || null,
+      port: error?.port || null,
     });
   }
 });
