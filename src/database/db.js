@@ -9,8 +9,12 @@ require("dotenv").config({
 function normalizeDatabaseUrl(rawUrl) {
   if (!rawUrl) return rawUrl;
 
-  // Accept accidental formats like '"postgres://...";' from .env edits.
-  const sanitizedUrl = rawUrl.trim().replace(/^"|"$/g, "").replace(/;$/, "");
+  // Accept accidental formats like 'DATABASE_URL=postgres://...', '"postgres://...";' from .env edits.
+  let sanitizedUrl = rawUrl.trim().replace(/^"|"$/g, "").replace(/;$/, "");
+
+  if (sanitizedUrl.toUpperCase().startsWith("DATABASE_URL=")) {
+    sanitizedUrl = sanitizedUrl.slice("DATABASE_URL=".length).trim();
+  }
 
   // Handles DATABASE_URL values where password contains unescaped '@'.
   const protocolMatch = sanitizedUrl.match(/^(postgres(?:ql)?):\/\//i);
@@ -31,7 +35,8 @@ function normalizeDatabaseUrl(rawUrl) {
   if (colonIndex < 0) return sanitizedUrl;
 
   const user = credentials.slice(0, colonIndex);
-  const password = credentials.slice(colonIndex + 1);
+  const rawPassword = credentials.slice(colonIndex + 1);
+  const password = rawPassword.replace(/^"|"$/g, "");
 
   // Avoid double-encoding when URL is already encoded.
   const encodedPassword = password.includes("%")
@@ -42,9 +47,18 @@ function normalizeDatabaseUrl(rawUrl) {
 }
 
 const connectionString = normalizeDatabaseUrl(process.env.DATABASE_URL);
+const requiresSsl = /sslmode=require/i.test(connectionString || "");
+const effectiveConnectionString = requiresSsl
+  ? (connectionString || "")
+      .replace(/([?&])sslmode=require(&|$)/i, (_, sep, tail) =>
+        tail === "&" ? sep : "",
+      )
+      .replace(/[?&]$/, "")
+  : connectionString;
 
 const pool = new Pool({
-  connectionString,
+  connectionString: effectiveConnectionString,
+  ssl: requiresSsl ? { rejectUnauthorized: false } : undefined,
 });
 
 //TABELA CIDADES

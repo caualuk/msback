@@ -6,6 +6,17 @@ const jwt = require("jsonwebtoken");
 const { generateToken } = require("../../../auth/auth");
 const { calculateDistance } = require("../../City/repository/City");
 
+function getErrorDetails(error) {
+  if (!error) return "Erro desconhecido";
+  if (typeof error === "string") return error;
+  if (error.message) return error.message;
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return "Erro sem detalhes serializáveis";
+  }
+}
+
 // CRIAR USUÁRIO
 async function createUser(req, res) {
   const {
@@ -112,7 +123,7 @@ async function login(req, res) {
     });
   } catch (error) {
     res.status(500).json({
-      error: "Erro no login: " + error.message,
+      error: "Erro no login: " + getErrorDetails(error),
     });
   }
 }
@@ -171,7 +182,8 @@ async function getPlatformStats(req, res) {
     });
   } catch (error) {
     res.status(500).json({
-      error: "Erro ao buscar estatísticas da plataforma: " + error.message,
+      error:
+        "Erro ao buscar estatísticas da plataforma: " + getErrorDetails(error),
     });
   }
 }

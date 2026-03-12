@@ -56,8 +56,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/db", async (req, res) => {
-  const result = await pool.query("SELECT NOW()");
-  res.json(result.rows);
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({
+      error: "Erro ao conectar no banco",
+      details: error?.message || "Sem detalhes",
+    });
+  }
 });
 
 app.listen(PORT, () => {
