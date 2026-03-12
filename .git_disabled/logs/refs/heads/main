@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 f5aea42b6628e09fa5e9041976469105c329417d Cauã Luka <cauacsl07@gmail.com> 1772116960 -0300	commit (initial): first commit
+f5aea42b6628e09fa5e9041976469105c329417d f5aea42b6628e09fa5e9041976469105c329417d Cauã Luka <cauacsl07@gmail.com> 1772116960 -0300	Branch: renamed refs/heads/master to refs/heads/main
+f5aea42b6628e09fa5e9041976469105c329417d 7f35c66d519f460725659bca297c04bff8767d6c Cauã Luka <cauacsl07@gmail.com> 1772116981 -0300	commit: adicionando cidade no getNearbyEmployees
+7f35c66d519f460725659bca297c04bff8767d6c d9b1c114432f189f61fd7a4582183b684381380a Cauã Luka <cauacsl07@gmail.com> 1772117660 -0300	commit: deixando servicos de funcionarios dentro do raio
+d9b1c114432f189f61fd7a4582183b684381380a 2a4921f98d3eb368a7aa8d4c56b4d0a4a4f3e54d Cauã Luka <cauacsl07@gmail.com> 1772123988 -0300	commit: gastos e ganhos e alimentando os graficos
+2a4921f98d3eb368a7aa8d4c56b4d0a4a4f3e54d 22b57e4d84bf232af86e3dd93ef62ef6de4746c4 Cauã Luka <cauacsl07@gmail.com> 1772140148 -0300	commit: corrigindo tabela de servicos ativos
+22b57e4d84bf232af86e3dd93ef62ef6de4746c4 8e3d804c449ef221e596ed5087194bf9815c43bc Cauã Luka <cauacsl07@gmail.com> 1772140428 -0300	commit: ajustando grafico corretamente (linha)
