@@ -66,8 +66,8 @@ function ensureSupabasePoolerPort(url) {
 
     if (!isSupabasePooler) return url;
 
-    if (!parsedUrl.port || parsedUrl.port === "5432") {
-      parsedUrl.port = "6543";
+    if (!parsedUrl.port) {
+      parsedUrl.port = "5432";
     }
 
     return parsedUrl.toString();
