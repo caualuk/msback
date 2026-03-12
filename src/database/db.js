@@ -55,13 +55,36 @@ function normalizeDatabaseUrl(rawUrl) {
   return `${protocol}${user}:${encodedPassword}@${hostPart}${path}`;
 }
 
+function ensureSupabasePoolerPort(url) {
+  if (!url) return url;
+
+  try {
+    const parsedUrl = new URL(url);
+    const isSupabasePooler = /pooler\.supabase\.com$/i.test(
+      parsedUrl.hostname || "",
+    );
+
+    if (!isSupabasePooler) return url;
+
+    if (!parsedUrl.port || parsedUrl.port === "5432") {
+      parsedUrl.port = "6543";
+    }
+
+    return parsedUrl.toString();
+  } catch {
+    return url;
+  }
+}
+
 const rawDatabaseUrl =
   process.env.DATABASE_URL ||
   process.env["DATABASE_URL:"] ||
   process.env.POSTGRES_URL ||
   process.env.POSTGRESQL_URL;
 
-const connectionString = normalizeDatabaseUrl(rawDatabaseUrl);
+const connectionString = ensureSupabasePoolerPort(
+  normalizeDatabaseUrl(rawDatabaseUrl),
+);
 
 if (!connectionString) {
   console.error(
