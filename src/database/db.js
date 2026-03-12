@@ -52,7 +52,8 @@ function normalizeDatabaseUrl(rawUrl) {
 }
 
 const connectionString = normalizeDatabaseUrl(process.env.DATABASE_URL);
-const requiresSsl = /sslmode=require/i.test(connectionString || "");
+const isSupabaseConnection = /supabase\.co/i.test(connectionString || "");
+const requiresSsl = /sslmode=require/i.test(connectionString || "") || isSupabaseConnection;
 const effectiveConnectionString = requiresSsl
   ? (connectionString || "")
       .replace(/([?&])sslmode=require(&|$)/i, (_, sep, tail) =>
